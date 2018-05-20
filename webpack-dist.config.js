@@ -11,7 +11,14 @@ const ghpages = require('gh-pages');
 
 function publishGhPages() {
   return new Promise((resolve, reject) => {
-    ghpages.publish(outputPath, { dotfiles: true }, (err) => {
+    ghpages.publish(outputPath, {
+      dotfiles: true,
+      repo: 'git@github.com:XyCxt/resume-1.git',
+      user: {
+        name: 'XyCxt',
+        email: 'xy@chenxitong.cn'
+      }
+    }, (err) => {
       if (err) {
         reject(err);
       } else {
@@ -21,7 +28,7 @@ function publishGhPages() {
   });
 }
 
-const outputPath = path.resolve(__dirname, '.public');
+const outputPath = path.resolve(__dirname, 'dist');
 module.exports = {
   output: {
     path: outputPath,
@@ -96,14 +103,14 @@ module.exports = {
     }),
     new EndWebpackPlugin(async () => {
       // 自定义域名
-      fs.writeFileSync(path.resolve(outputPath, 'CNAME'), 'resume.wuhaolin.cn');
+      fs.writeFileSync(path.resolve(outputPath, 'CNAME'), 'resume.chenxitong.cn');
 
       await publishGhPages();
 
       // 调用 Chrome 渲染出 PDF 文件
       const chromePath = findChrome();
       spawnSync(chromePath, ['--headless', '--disable-gpu', `--print-to-pdf=${path.resolve(outputPath, 'resume.pdf')}`,
-        'http://resume.wuhaolin.cn' // 这里注意改成你的在线简历的网站
+        'http://resume.chenxitong.cn' // 这里注意改成你的在线简历的网站
       ]);
 
       // 重新发布到 ghpages
